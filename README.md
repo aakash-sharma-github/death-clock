@@ -93,5 +93,5 @@ This project is licensed under the MIT License - see the LICENSE file for detail
 
 ## Acknowledgments
 
-- Inspired by various death clock applications
+- Inspired by [developer_rahul](https://codepen.io/rahul-sahni)
 - Clock design inspired by analog clocks and time visualization techniques
