@@ -46,7 +46,7 @@ export default function GreetingSection({ myFont }) {
 
     return (
         <div className={`greeting-section ${myFont.className} text-4xl`}>
-            <h1 className={`${myFont.className} font-semibold`}>{`${greeting}, Aakash Sharma`}</h1>
+            <h1 className={`${myFont.className} font-semibold`}>{`${greeting}, Aakash`}</h1>
             <div className="date">
                 {date}
             </div>

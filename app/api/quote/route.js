@@ -1,155 +1,153 @@
+// app/api/quote/route.js
 export async function GET() {
     try {
-        // Try the primary API first
-        const primaryResponse = await fetchPrimaryQuote();
-        if (primaryResponse.success) {
-            return new Response(
-                JSON.stringify(primaryResponse.data),
-                {
-                    status: 200,
-                    headers: { 'Content-Type': 'application/json' }
-                }
-            );
+        // Try the first quote API
+        const firstApiResult = await fetchFromFirstApi();
+        if (firstApiResult.success) {
+            return createSuccessResponse(firstApiResult.data);
         }
 
-        // Only try fallback if primary returns 429 (Too Many Requests)
-        if (primaryResponse.status === 429) {
-            console.log('Primary API rate limited (429), trying fallback API');
-            const fallbackResponse = await fetchFallbackQuote();
+        // If first API failed with status 429 (rate limit), try the second API
+        if (firstApiResult.status === 429) {
+            console.log('First API rate limited, trying second API');
+            const secondApiResult = await fetchFromSecondApi();
 
-            if (fallbackResponse.success) {
-                return new Response(
-                    JSON.stringify(fallbackResponse.data),
-                    {
-                        status: 200,
-                        headers: { 'Content-Type': 'application/json' }
-                    }
-                );
+            if (secondApiResult.success) {
+                return createSuccessResponse(secondApiResult.data);
             }
-
-            // If fallback also fails, return local fallback
-            return createLocalFallbackResponse();
         }
 
-        // For non-429 errors, return local fallback
-        return createLocalFallbackResponse();
+        // If both APIs failed or first API failed with non-429 error, use fallback
+        return createFallbackResponse();
 
     } catch (error) {
         console.error('Unexpected error in quote API:', error);
-        return createLocalFallbackResponse();
+        return createFallbackResponse();
     }
 }
 
-async function fetchPrimaryQuote() {
+async function fetchFromFirstApi() {
     try {
-        const rapidApiKey = process.env.NEXT_PUBLIC_X_RAPIDAPI_KEY;
-        const rapidApiHost = process.env.NEXT_PUBLIC_X_RAPIDAPI_HOST;
-        const rapidApiEndpoint = process.env.NEXT_PUBLIC_X_RAPIDAPI_ENDPOINT;
-
-        // Check if environment variables are set
-        if (!rapidApiKey || !rapidApiHost || !rapidApiEndpoint) {
-            console.error('Missing environment variables for primary API');
-            return {
-                success: false,
-                error: 'Missing environment variables for primary API'
-            };
+        const apiKey = process.env.NEXT_PUBLIC_X_RAPIDAPI_KEY;
+        if (!apiKey) {
+            console.error('Missing API key');
+            return { success: false, error: 'Missing API key' };
         }
 
         const options = {
             method: 'GET',
             headers: {
-                'x-rapidapi-key': rapidApiKey,
-                'x-rapidapi-host': rapidApiHost,
-            }
+                'X-RapidAPI-Key': apiKey,
+                'X-RapidAPI-Host': 'famous-quotes4.p.rapidapi.com',
+                'User-Agent': 'Mozilla/5.0 (compatible; NextJS/13.0; +https://nextjs.org/)'
+            },
+            cache: 'no-store' // Prevent caching issues
         };
 
-        const response = await fetch(rapidApiEndpoint, options);
-        console.log('Primary quote API response status:', response.status);
+        const response = await fetch('https://famous-quotes4.p.rapidapi.com/random', options);
+        console.log('First API status:', response.status);
 
         if (response.ok) {
-            const data = await response.json();
-            console.log('Primary quote API response data:', JSON.stringify(data));
-            return { success: true, data };
+            const rawData = await response.json();
+            console.log('First API raw response:', JSON.stringify(rawData));
+
+            // Format the data consistently
+            const formattedData = {
+                quote: rawData.text || rawData.quote || (Array.isArray(rawData) ? rawData[0]?.text : ''),
+                author: rawData.author || (Array.isArray(rawData) ? rawData[0]?.author : 'Unknown')
+            };
+
+            return { success: true, data: formattedData };
         }
 
-        // Return failure with status code for specific handling
         return {
             success: false,
             status: response.status,
-            error: `Primary API returned status: ${response.status}`
+            error: `API returned status: ${response.status}`
         };
     } catch (error) {
-        console.error('Primary quote API error:', error);
-        return {
-            success: false,
-            error: `Primary API error: ${error.message}`
-        };
+        console.error('Error in first API fetch:', error);
+        return { success: false, error: error.message };
     }
 }
 
-async function fetchFallbackQuote() {
+async function fetchFromSecondApi() {
     try {
-        const rapidApiKey = process.env.NEXT_PUBLIC_X_RAPIDAPI_KEY;
-        const rapidApiHost = process.env.NEXT_PUBLIC_X_RAPIDAPI_QUOTE_HOST;
-        const rapidApiEndpoint = process.env.NEXT_PUBLIC_X_RAPIDAPI_QUOTE_ENDPOINT;
-
-        // Check if environment variables are set
-        if (!rapidApiKey || !rapidApiHost || !rapidApiEndpoint) {
-            console.error('Missing environment variables for fallback API');
-            return {
-                success: false,
-                error: 'Missing environment variables for fallback API'
-            };
+        const apiKey = process.env.NEXT_PUBLIC_X_RAPIDAPI_KEY;
+        if (!apiKey) {
+            console.error('Missing API key');
+            return { success: false, error: 'Missing API key' };
         }
-
-        const category = 'inspirational';
 
         const options = {
             method: 'GET',
             headers: {
-                'x-rapidapi-key': rapidApiKey,
-                'x-rapidapi-host': rapidApiHost,
-            }
+                'X-RapidAPI-Key': apiKey,
+                'X-RapidAPI-Host': 'random-quote-api3.p.rapidapi.com',
+                'User-Agent': 'Mozilla/5.0 (compatible; NextJS/13.0; +https://nextjs.org/)'
+            },
+            cache: 'no-store' // Prevent caching issues
         };
 
-        const response = await fetch(`${rapidApiEndpoint}?category=${category}&count=1`, options);
-        console.log('Fallback quote API response status:', response.status);
+        const response = await fetch('https://random-quote-api3.p.rapidapi.com/?category=inspirational&count=1', options);
+        console.log('Second API status:', response.status);
 
         if (response.ok) {
-            const data = await response.json();
-            console.log('Fallback quote API response data:', JSON.stringify(data));
-            return { success: true, data };
+            const rawData = await response.json();
+            console.log('Second API raw response:', JSON.stringify(rawData));
+
+            // Format the data consistently
+            const formattedData = {
+                quote: rawData.text || rawData.quote || (Array.isArray(rawData) ? rawData[0]?.text : ''),
+                author: rawData.author || (Array.isArray(rawData) ? rawData[0]?.author : 'Unknown')
+            };
+
+            return { success: true, data: formattedData };
         }
 
         return {
             success: false,
-            error: `Fallback API returned status: ${response.status}`
+            status: response.status,
+            error: `API returned status: ${response.status}`
         };
     } catch (error) {
-        console.error('Fallback quote API error:', error);
-        return {
-            success: false,
-            error: `Fallback API error: ${error.message}`
-        };
+        console.error('Error in second API fetch:', error);
+        return { success: false, error: error.message };
     }
 }
 
-function createLocalFallbackResponse() {
+function createSuccessResponse(data) {
+    return new Response(
+        JSON.stringify(data),
+        {
+            status: 200,
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-store, max-age=0'
+            }
+        }
+    );
+}
+
+function createFallbackResponse() {
     const fallbackQuotes = [
-        { quote: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt." },
-        { quote: "Life is what happens when you're busy making other plans.", author: "John Lennon." },
-        { quote: "The purpose of our lives is to be happy.", author: "Dalai Lama." },
-        { quote: "You only live once, but if you do it right, once is enough.", author: "Mae West." },
+        { quote: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
+        { quote: "Life is what happens when you're busy making other plans.", author: "John Lennon" },
+        { quote: "The purpose of our lives is to be happy.", author: "Dalai Lama" },
+        { quote: "You only live once, but if you do it right, once is enough.", author: "Mae West" },
         { quote: "The time is always right to do what is right.", author: "Martin Luther King Jr." }
     ];
 
-    const randomIndex = Math.floor(Math.random() * fallbackQuotes.length);
+    const randomQuote = fallbackQuotes[Math.floor(Math.random() * fallbackQuotes.length)];
 
     return new Response(
-        JSON.stringify(fallbackQuotes[randomIndex]),
+        JSON.stringify(randomQuote),
         {
             status: 200,
-            headers: { 'Content-Type': 'application/json' }
+            headers: {
+                'Content-Type': 'application/json',
+                'Cache-Control': 'no-store, max-age=0'
+            }
         }
     );
 }
