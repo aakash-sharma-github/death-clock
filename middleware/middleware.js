@@ -18,10 +18,18 @@ export function middleware(request) {
     response.headers.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     response.headers.set('Access-Control-Allow-Credentials', 'true');
 
+    // Add SameSite=None and Secure attributes to cookies
+    response.headers.set('Set-Cookie',
+        response.headers.get('Set-Cookie')?.replace(
+            /(SameSite=Lax|SameSite=Strict)/,
+            'SameSite=None; Secure'
+        ) || ''
+    );
+
     return response;
 }
 
 // Specify which routes this middleware should run on
 export const config = {
     matcher: ['/api/:path*'],
-}; 
+};
