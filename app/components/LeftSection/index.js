@@ -11,9 +11,8 @@ import { useContextApi } from '../../contexts/contextApi';
 import localFont from 'next/font/local';
 import { useEffect } from 'react';
 
-
 const myFont = localFont({
-    src: '../../public/assets/Fonts/FORTE.ttf',
+    src: "../../../public/assets/Fonts/FORTE.ttf",
 });
 
 export default function LeftSection() {
