@@ -28,7 +28,7 @@ export default function CountdownTimer() {
             const minutes = Math.floor((timeLeftMs % (1000 * 60 * 60)) / (1000 * 60));
             const seconds = Math.floor((timeLeftMs % (1000 * 60)) / 1000);
 
-            setTimeLeft(`Time left: ${years}y ${days}d ${hours}h ${minutes}m ${seconds}s`);
+            setTimeLeft(`Time left for goals: ${years}y ${days}d ${hours}h ${minutes}m ${seconds}s`);
         };
 
         updateCountdownTimer();
