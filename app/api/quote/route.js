@@ -29,8 +29,9 @@ export async function GET() {
 async function fetchFromFirstApi() {
     try {
         const apiKey = process.env.NEXT_PUBLIC_X_RAPIDAPI_KEY;
-        const apiUrl = process.env.NEXT_PUBLIC_X_RAPIDAPI_QUOTE_ENDPOINT;
-        const apihost = process.env.NEXT_PUBLIC_X_RAPIDAPI_QUOTE_HOST;
+        const apiUrl = process.env.NEXT_PUBLIC_X_RAPIDAPI_ENDPOINT;
+        const apihost = process.env.NEXT_PUBLIC_X_RAPIDAPI_HOST;
+
         if (!apiKey) {
             console.error('Missing API key');
             return { success: false, error: 'Missing API key' };
@@ -76,9 +77,10 @@ async function fetchFromFirstApi() {
 async function fetchFromSecondApi() {
     try {
         const apiKey = process.env.NEXT_PUBLIC_X_RAPIDAPI_KEY;
-        const apiendpoint = process.env.NEXT_PUBLIC_X_RAPIDAPI_ENDPOINT;
-        const apihost = process.env.NEXT_PUBLIC_X_RAPIDAPI_HOST;
+        const apiendpoint = process.env.NEXT_PUBLIC_X_RAPIDAPI_QUOTE_ENDPOINT;
+        const apihost = process.env.NEXT_PUBLIC_X_RAPIDAPI_QUOTE_HOST;
         const cat = process.env.NEXT_PUBLIC_X_RAPIDAPI_CATEGORY;
+
         if (!apiKey) {
             console.error('Missing API key');
             return { success: false, error: 'Missing API key' };
