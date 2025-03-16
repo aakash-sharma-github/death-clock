@@ -29,6 +29,8 @@ export async function GET() {
 async function fetchFromFirstApi() {
     try {
         const apiKey = process.env.NEXT_PUBLIC_X_RAPIDAPI_KEY;
+        const apiUrl = process.env.NEXT_PUBLIC_X_RAPIDAPI_QUOTE_ENDPOINT;
+        const apihost = process.env.NEXT_PUBLIC_X_RAPIDAPI_QUOTE_HOST;
         if (!apiKey) {
             console.error('Missing API key');
             return { success: false, error: 'Missing API key' };
@@ -38,13 +40,13 @@ async function fetchFromFirstApi() {
             method: 'GET',
             headers: {
                 'X-RapidAPI-Key': apiKey,
-                'X-RapidAPI-Host': 'famous-quotes4.p.rapidapi.com',
+                'X-RapidAPI-Host': apihost,
                 'User-Agent': 'Mozilla/5.0 (compatible; NextJS/13.0; +https://nextjs.org/)'
             },
             cache: 'no-store' // Prevent caching issues
         };
 
-        const response = await fetch('https://famous-quotes4.p.rapidapi.com/random', options);
+        const response = await fetch(apiUrl, options);
         console.log('First API status:', response.status);
 
         if (response.ok) {
@@ -74,6 +76,9 @@ async function fetchFromFirstApi() {
 async function fetchFromSecondApi() {
     try {
         const apiKey = process.env.NEXT_PUBLIC_X_RAPIDAPI_KEY;
+        const apiendpoint = process.env.NEXT_PUBLIC_X_RAPIDAPI_ENDPOINT;
+        const apihost = process.env.NEXT_PUBLIC_X_RAPIDAPI_HOST;
+        const cat = process.env.NEXT_PUBLIC_X_RAPIDAPI_CATEGORY;
         if (!apiKey) {
             console.error('Missing API key');
             return { success: false, error: 'Missing API key' };
@@ -83,13 +88,13 @@ async function fetchFromSecondApi() {
             method: 'GET',
             headers: {
                 'X-RapidAPI-Key': apiKey,
-                'X-RapidAPI-Host': 'random-quote-api3.p.rapidapi.com',
+                'X-RapidAPI-Host': apihost,
                 'User-Agent': 'Mozilla/5.0 (compatible; NextJS/13.0; +https://nextjs.org/)'
             },
             cache: 'no-store' // Prevent caching issues
         };
 
-        const response = await fetch('https://random-quote-api3.p.rapidapi.com/?category=inspirational&count=1', options);
+        const response = await fetch(`${apiendpoint}?category=${cat}&count=1`, options);
         console.log('Second API status:', response.status);
 
         if (response.ok) {
@@ -131,10 +136,10 @@ function createSuccessResponse(data) {
 
 function createFallbackResponse() {
     const fallbackQuotes = [
-        { quote: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
-        { quote: "Life is what happens when you're busy making other plans.", author: "John Lennon" },
-        { quote: "The purpose of our lives is to be happy.", author: "Dalai Lama" },
-        { quote: "You only live once, but if you do it right, once is enough.", author: "Mae West" },
+        { quote: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt." },
+        { quote: "Life is what happens when you're busy making other plans.", author: "John Lennon." },
+        { quote: "The purpose of our lives is to be happy.", author: "Dalai Lama." },
+        { quote: "You only live once, but if you do it right, once is enough.", author: "Mae West." },
         { quote: "The time is always right to do what is right.", author: "Martin Luther King Jr." }
     ];
 
