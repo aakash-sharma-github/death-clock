@@ -27,16 +27,16 @@ export async function GET() {
                 );
             }
 
-            // If fallback also fails, return its error
-            return createErrorResponse(fallbackResponse.error);
+            // If fallback also fails, return local fallback
+            return createLocalFallbackResponse();
         }
 
-        // For non-429 errors, return the primary API error
-        return createErrorResponse(primaryResponse.error);
+        // For non-429 errors, return local fallback
+        return createLocalFallbackResponse();
 
     } catch (error) {
         console.error('Unexpected error in quote API:', error);
-        return createErrorResponse('Internal Server Error', error.message);
+        return createLocalFallbackResponse();
     }
 }
 
@@ -45,6 +45,15 @@ async function fetchPrimaryQuote() {
         const rapidApiKey = process.env.NEXT_PUBLIC_X_RAPIDAPI_KEY;
         const rapidApiHost = process.env.NEXT_PUBLIC_X_RAPIDAPI_HOST;
         const rapidApiEndpoint = process.env.NEXT_PUBLIC_X_RAPIDAPI_ENDPOINT;
+
+        // Check if environment variables are set
+        if (!rapidApiKey || !rapidApiHost || !rapidApiEndpoint) {
+            console.error('Missing environment variables for primary API');
+            return {
+                success: false,
+                error: 'Missing environment variables for primary API'
+            };
+        }
 
         const options = {
             method: 'GET',
@@ -83,7 +92,17 @@ async function fetchFallbackQuote() {
         const rapidApiKey = process.env.NEXT_PUBLIC_X_RAPIDAPI_KEY;
         const rapidApiHost = process.env.NEXT_PUBLIC_X_RAPIDAPI_QUOTE_HOST;
         const rapidApiEndpoint = process.env.NEXT_PUBLIC_X_RAPIDAPI_QUOTE_ENDPOINT;
-        const category = 'motivational';
+
+        // Check if environment variables are set
+        if (!rapidApiKey || !rapidApiHost || !rapidApiEndpoint) {
+            console.error('Missing environment variables for fallback API');
+            return {
+                success: false,
+                error: 'Missing environment variables for fallback API'
+            };
+        }
+
+        const category = 'inspirational';
 
         const options = {
             method: 'GET',
@@ -115,31 +134,22 @@ async function fetchFallbackQuote() {
     }
 }
 
-function createErrorResponse(errorType, errorMessage = '') {
+function createLocalFallbackResponse() {
+    const fallbackQuotes = [
+        { quote: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt." },
+        { quote: "Life is what happens when you're busy making other plans.", author: "John Lennon." },
+        { quote: "The purpose of our lives is to be happy.", author: "Dalai Lama." },
+        { quote: "You only live once, but if you do it right, once is enough.", author: "Mae West." },
+        { quote: "The time is always right to do what is right.", author: "Martin Luther King Jr." }
+    ];
+
+    const randomIndex = Math.floor(Math.random() * fallbackQuotes.length);
+
     return new Response(
-        JSON.stringify({
-            error: errorType,
-            message: errorMessage
-        }),
+        JSON.stringify(fallbackQuotes[randomIndex]),
         {
-            status: 500,
+            status: 200,
             headers: { 'Content-Type': 'application/json' }
         }
     );
 }
-
-// Uncomment this for a local fallback when both APIs fail
-/*
-function getLocalFallbackQuote() {
-  const fallbackQuotes = [
-    { quote: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
-    { quote: "Life is what happens when you're busy making other plans.", author: "John Lennon" },
-    { quote: "The purpose of our lives is to be happy.", author: "Dalai Lama" },
-    { quote: "You only live once, but if you do it right, once is enough.", author: "Mae West" },
-    { quote: "The time is always right to do what is right.", author: "Martin Luther King Jr." }
-  ];
-  
-  const randomIndex = Math.floor(Math.random() * fallbackQuotes.length);
-  return fallbackQuotes[randomIndex];
-}
-*/
