@@ -76,7 +76,7 @@ export function AppProvider({ children }) {
             }
 
             // Daily goal
-            const savedGoal = localStorage.getItem('yourGoals');
+            const savedGoal = localStorage.getItem('goals');
             if (savedGoal) {
                 setDailyGoal(savedGoal);
             }
