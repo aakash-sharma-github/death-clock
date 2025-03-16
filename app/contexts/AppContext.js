@@ -37,7 +37,7 @@ export function AppProvider({ children }) {
 
     // State variables - always start with muted=true for better user experience
     const [locale, setLocale] = useState('en-US');
-    const [currency, setCurrency] = useState('रू');
+    // const [currency, setCurrency] = useState('रू');
     const [isMuted, setIsMuted] = useState(true);
     const [currentSearchEngine, setCurrentSearchEngine] = useState({
         engine: 'google',
@@ -76,7 +76,7 @@ export function AppProvider({ children }) {
             }
 
             // Daily goal
-            const savedGoal = localStorage.getItem('dailyGoal');
+            const savedGoal = localStorage.getItem('yourGoals');
             if (savedGoal) {
                 setDailyGoal(savedGoal);
             }
@@ -142,16 +142,22 @@ export function AppProvider({ children }) {
         const symbol = currencySymbols[currencyType] || 'रू';
 
         // Different locale format based on currency
-        // let locale = currencySymbols.inr;
-        if (currencyType === 'usd') setCurrency(currencySymbols.usd);
-        else if (currencyType === 'npr') setCurrency(currencySymbols.npr);
-        else if (currencyType === 'aed') setCurrency(currencySymbols.aed);
+        // let locale = locale;
+        // if (currencyType === 'usd') setLocale(currencySymbols.usd);
+        // else if (currencyType === 'npr') setLocale(currencySymbols.npr);
+        // else if (currencyType === 'aed') setLocale(currencySymbols.aed);
+        // else if (currencyType === 'inr') setLocale(currencySymbols.inr);
 
-        const formattedAmount = symbol + parseFloat(amount).toLocaleString(currency, {
+        let locale = 'en-US'; // Default to Indian Rupee
+        if (currencyType === 'usd') locale = 'en-US';
+        else if (currencyType === 'npr') locale = 'en-US';
+        else if (currencyType === 'aed') locale = 'en-US';
+        else if (currencyType === 'inr') locale = 'en-US';
+
+        const formattedAmount = symbol + parseFloat(amount).toLocaleString(locale, {
             minimumFractionDigits: 2,
             maximumFractionDigits: 2
         });
-        console.log('Formatted amount:', formattedAmount);
 
         return formattedAmount;
     };
@@ -234,7 +240,7 @@ export function AppProvider({ children }) {
     const updateDailyGoal = (goal) => {
         setDailyGoal(goal);
         if (typeof window !== 'undefined') {
-            localStorage.setItem('dailyGoal', goal);
+            localStorage.setItem('goals', goal);
         }
     };
 

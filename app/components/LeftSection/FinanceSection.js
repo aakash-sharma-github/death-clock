@@ -5,7 +5,15 @@ import { useAppContext } from '../../contexts/AppContext';
 import { FaChevronDown } from 'react-icons/fa';
 
 export default function FinanceSection() {
-    const { balance, lastUpdated, updateBalance, formatBalance, currencyType, currencySymbols, updateCurrencyType } = useAppContext();
+    const {
+        balance,
+        lastUpdated,
+        updateBalance,
+        formatBalance,
+        currencyType,
+        currencySymbols,
+        updateCurrencyType
+    } = useAppContext();
     const [isEditing, setIsEditing] = useState(false);
     const [editableBalance, setEditableBalance] = useState('');
     const [showCurrencyDropdown, setShowCurrencyDropdown] = useState(false);

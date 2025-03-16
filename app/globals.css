@@ -493,12 +493,12 @@ body {
 /* month names */
 .clock > div:nth-child(6) {
   --clock-d: calc(var(--clock-size) - 305px);
-  --f-size: 0.6rem;
+  --f-size: 0.65rem;
 }
 /* day names */
 .clock > div:nth-child(7) {
   --clock-d: calc(var(--clock-size) - 365px);
-  --f-size: 0.6rem;
+  --f-size: 0.9rem;
 }
 
 .clock-face {
@@ -515,6 +515,7 @@ body {
   white-space: nowrap;
   color: white;
   opacity: 0.85;
+  font-size: var(--f-size);
   font-weight: 400;
   letter-spacing: 0;
 }
@@ -542,7 +543,7 @@ body {
   aspect-ratio: 1/1;
   cursor: pointer;
   transition: 300ms ease-in-out;
-  font-size: 1.1rem;
+  font-size: 1.8rem;
   outline: none;
 }
 
@@ -671,8 +672,8 @@ dialog .btn-dialog-close:hover {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
-  padding: 2rem;
+  gap: 2rem;
+  padding: 6rem;
 }
 
 .death-year-input-container h2 {
@@ -684,7 +685,7 @@ dialog .btn-dialog-close:hover {
 .death-year-input-container input {
   padding: 0.5rem;
   font-size: 1.2rem;
-  width: 200px;
+  width: 300px;
   text-align: center;
   background: rgba(255, 255, 255, 0.1);
   border: 1px solid rgba(255, 255, 255, 0.2);
@@ -708,7 +709,7 @@ dialog .btn-dialog-close:hover {
 }
 
 .clock-face .number.dead {
-  color: red;
+  /* color: red; */
   opacity: 1;
 }
 

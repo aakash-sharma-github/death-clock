@@ -29,7 +29,7 @@ export default function Clock() {
         // Set flag and language name based on locale
         switch (locale) {
             case 'en-US':
-                setCurrentFlag('🇳🇵');
+                setCurrentFlag('🇺🇸');
                 setCurrentLangName('English (US)');
                 break;
             case 'en-GB':
