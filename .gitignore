@@ -19,6 +19,7 @@
 
 # production
 /build
+/death-clock-extension
 
 # misc
 .DS_Store

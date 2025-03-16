@@ -44,11 +44,17 @@ export default function Weather() {
     const fetchWeatherData = async () => {
         try {
             // Using OpenWeatherMap API if available
-            const API_KEY = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY;
+            const API_KEY = process.env.NEXT_PUBLIC_OPENWEATHERMAP_API_KEY;
+            const API_ENDPOINT = process.env.NEXT_PUBLIC_OPENWEATHERMAP_API_ENDPOINT;
+            const API_UNIT = process.env.NEXT_PUBLIC_OPENWEATHERMAP_UNITS;
 
-            if (API_KEY && API_KEY !== 'YOUR_API_KEY') {
+            if (!API_KEY && !API_ENDPOINT && !API_UNIT) {
+                setError("OpenWeatherMap API key or endpoint are not available.");
+                setLoading(false);
+                return;
+            } else if (API_KEY) {
                 try {
-                    const directUrl = `https://api.openweathermap.org/data/2.5/weather?lat=${position.lat}&lon=${position.lon}&units=metric&appid=${API_KEY}`;
+                    const directUrl = `${API_ENDPOINT}?lat=${position.lat}&lon=${position.lon}&units=${API_UNIT}&appid=${API_KEY}`;
                     let response;
 
                     // First try direct API call
@@ -85,7 +91,9 @@ export default function Weather() {
 
             // Fallback to free API if OpenWeather API key is not available or request fails
             try {
-                const fallbackUrl = `https://api.weatherapi.com/v1/current.json?key=0ec1db596b274225ac0191646240605&q=${position.lat},${position.lon}&aqi=no`;
+                const api_key = process.env.NEXT_PUBLIC_OPENWEATHER_API_KEY;
+                const api_endpoint = process.env.NEXT_PUBLIC_OPENWEATHER_API_ENDPOINT;
+                const fallbackUrl = `${api_endpoint}?key=${api_key}&q=${position.lat},${position.lon}&aqi=no`;
                 let response;
 
                 // First try direct API call

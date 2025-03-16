@@ -7,7 +7,6 @@ import {
 import { FaLinkedin } from "react-icons/fa";
 import { SiClaude, SiGmail } from "react-icons/si";
 import { FaA } from "react-icons/fa6";
-import Image from 'next/image';
 
 export default function QuickLinks() {
     const links = [
@@ -57,7 +56,7 @@ export default function QuickLinks() {
                         key={index}
                         href={link.url}
                         className="quick-link"
-                        title={`Go to ${link.name}`}
+                        title={link.name}
                         target="_blank"
                         rel="noopener noreferrer"
                     >
