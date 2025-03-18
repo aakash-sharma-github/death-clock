@@ -5,7 +5,7 @@ import {
     AiOutlineOpenAI
 } from 'react-icons/ai'
 import { FaLinkedin } from "react-icons/fa";
-import { SiClaude, SiGmail } from "react-icons/si";
+import { SiClaude, SiGmail, SiVercel } from "react-icons/si";
 import { FaA } from "react-icons/fa6";
 
 export default function QuickLinks() {
@@ -44,6 +44,11 @@ export default function QuickLinks() {
             url: 'https://chat.openai.com/',
             icon: <AiOutlineOpenAI className="quick-link-icon" />,
             name: 'ChatGPT'
+        },
+        {
+            url: 'https://vercel.com/',
+            icon: <SiVercel className="quick-link-icon" />,
+            name: 'Vercel'
         }
     ];
 
