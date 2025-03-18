@@ -136,7 +136,7 @@ export default function FinanceSection() {
     };
 
     // Get current currency symbol
-    const currentSymbol = currencySymbols[currencyType] || 'रू';
+    const currentSymbol = currencySymbols[currencyType];
 
     // Currency labels for dropdown
     const currencyLabels = {

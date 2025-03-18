@@ -9,7 +9,6 @@ export async function GET() {
 
         // If first API failed with status 429 (rate limit), try the second API
         if (firstApiResult.status === 429) {
-            console.log('First API rate limited, trying second API');
             const secondApiResult = await fetchFromSecondApi();
 
             if (secondApiResult.success) {
@@ -52,7 +51,6 @@ async function fetchFromFirstApi() {
 
         if (response.ok) {
             const rawData = await response.json();
-            console.log('First API raw response:', JSON.stringify(rawData));
 
             // Format the data consistently
             const formattedData = {
@@ -97,11 +95,9 @@ async function fetchFromSecondApi() {
         };
 
         const response = await fetch(`${apiendpoint}?category=${cat}&count=1`, options);
-        console.log('Second API status:', response.status);
 
         if (response.ok) {
             const rawData = await response.json();
-            console.log('Second API raw response:', JSON.stringify(rawData));
 
             // Format the data consistently
             const formattedData = {

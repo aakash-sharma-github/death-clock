@@ -56,7 +56,7 @@ export default function RightSection() {
 
             <SoundControl />
 
-            {/* <LanguageDialog /> */}
+            <LanguageDialog />
             <DeathYearDialog />
         </div>
     );

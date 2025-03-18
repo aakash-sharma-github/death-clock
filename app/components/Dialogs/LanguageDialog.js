@@ -7,17 +7,20 @@ export default function LanguageDialog() {
     const dialogRef = useRef(null);
     const { locale, updateLocale, showLanguageDialog, setShowLanguageDialog } = useAppContext();
     const [languages] = useState([
-        { code: 'ne-NP', name: 'Nepali (Nepal)', flag: '🇳🇵' },
-        { code: 'en-US', flag: '🇺🇸', name: 'English (US)' },
-        { code: 'en-GB', flag: '🇬🇧', name: 'English (UK)' },
-        { code: 'fr-FR', flag: '🇫🇷', name: 'French' },
-        { code: 'de-DE', flag: '🇩🇪', name: 'German' },
-        { code: 'es-ES', flag: '🇪🇸', name: 'Spanish' },
-        { code: 'it-IT', flag: '🇮🇹', name: 'Italian' },
-        { code: 'ja-JP', flag: '🇯🇵', name: 'Japanese' },
-        { code: 'zh-CN', flag: '🇨🇳', name: 'Chinese' },
-        { code: 'ru-RU', flag: '🇷🇺', name: 'Russian' },
-        { code: 'ar-SA', flag: '🇸🇦', name: 'Arabic' }
+        { code: "ne-NP", flag: "🇳🇵", name: "Nepal" },
+        { code: "en-IN", flag: "🇮🇳", name: "India" },
+        { code: "en-AU", flag: "🇦🇺", name: "Australia" },
+        { code: "en-US", flag: "🇺🇸", name: "United States" },
+        { code: "en-GB", flag: "🇬🇧", name: "United Kingdom" },
+        { code: "fr-FR", flag: "🇫🇷", name: "France" },
+        { code: "de-DE", flag: "🇩🇪", name: "Germany" },
+        { code: "es-ES", flag: "🇪🇸", name: "Spain" },
+        { code: "it-IT", flag: "🇮🇹", name: "Italy" },
+        { code: "ja-JP", flag: "🇯🇵", name: "Japan" },
+        { code: "zh-CN", flag: "🇨🇳", name: "China" },
+        { code: "ru-RU", flag: "🇷🇺", name: "Russia" },
+        { code: "ar-SA", flag: "🇸🇦", name: "Saudi Arabia" },
+        { code: "en-AE", flag: "🇦🇪", name: "United Arab Emirates" }
     ]);
 
     // Handle dialog open
@@ -65,58 +68,63 @@ export default function LanguageDialog() {
         }
     };
 
-    const handleLanguageSelect = (code) => {
+    const handleFlagSelect = (code) => {
         updateLocale(code);
         closeDialog();
     };
 
-    // Calculate positions for language options in a circle
+    // Calculate positions for flag options in a circle
     const calculatePositions = () => {
-        const positionedLanguages = [];
-        const radius = 60; // Reduced radius to ensure flags stay within the dialog circle
-        const numLanguages = languages.length;
+        const positionedFlags = [];
+        const radius = 60; // Radius for the circle of flags
+        const numFlags = languages.length;
 
         languages.forEach((lang, index) => {
-            // Calculate angle (in radians) for each language option
+            // Calculate angle (in radians) for each flag option
             // Start from -Math.PI/2 (top position) and distribute evenly
-            const angle = -Math.PI / 2 + (index * 2 * Math.PI / numLanguages);
+            const angle = -Math.PI / 2 + (index * 2 * Math.PI / numFlags);
 
             // Calculate x and y positions (50% is center of the dialog)
             const x = 50 + radius * Math.cos(angle);
             const y = 50 + radius * Math.sin(angle);
 
-            positionedLanguages.push({
+            positionedFlags.push({
                 ...lang,
                 style: {
                     left: `${x}%`,
-                    top: `${y}%`
+                    top: `${y}%`,
+                    transform: 'translate(-50%, -50%)', // Center the flag element
+                    position: 'absolute'
                 }
             });
         });
 
-        return positionedLanguages;
+        return positionedFlags;
     };
 
     return (
-        <dialog id="language-dialog" ref={dialogRef}>
+        <dialog id="language-dialog" ref={dialogRef} className="flag-dialog">
             <button type="button" id="btn-dialog-close" className="btn-dialog-close" autoFocus>✕</button>
-            <div id="language-options" className="language-options">
-                <div className="language-title">Select Language</div>
+            <div id="language-options" className="flag-options">
+                <div className="flag-title">Select Flag</div>
 
                 {calculatePositions().map((lang) => (
                     <label
                         key={lang.code}
-                        className={`language-option ${lang.code === locale ? 'active' : ''}`}
+                        className={`flag-option ${lang.code === locale ? 'active' : ''}`}
                         style={lang.style}
                         title={lang.name}
-                        onClick={() => handleLanguageSelect(lang.code)}
+                        onClick={() => handleFlagSelect(lang.code)}
                     >
+                        <span className="link-tooltip">
+                            {lang.name}
+                        </span>
                         <input
                             type="radio"
-                            name="language"
+                            name="flag"
                             value={lang.code}
                             checked={lang.code === locale}
-                            onChange={() => { }}
+                            readOnly
                         />
                         <span className="flag-icon">{lang.flag}</span>
                     </label>
@@ -124,4 +132,4 @@ export default function LanguageDialog() {
             </div>
         </dialog>
     );
-} 
+}

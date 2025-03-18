@@ -8,7 +8,7 @@ export default function Clock() {
     const { locale, setShowLanguageDialog } = useAppContext();
     const { deathYear } = useDeathYearContext();
     const clockRef = useRef(null);
-    const [currentFlag, setCurrentFlag] = useState('🇳🇵');
+    const [currentFlag, setCurrentFlag] = useState('');
     const [currentLangName, setCurrentLangName] = useState('English (US)');
 
     useEffect(() => {
@@ -28,49 +28,65 @@ export default function Clock() {
     useEffect(() => {
         // Set flag and language name based on locale
         switch (locale) {
-            case 'en-US':
+            case 'ne-NP':
                 setCurrentFlag('🇳🇵');
-                setCurrentLangName('English (US)');
+                setCurrentLangName('en-US');
+                break;
+            case 'en-IN':
+                setCurrentFlag('🇮🇳');
+                setCurrentLangName('en-US');
+                break;
+            case 'en-AU':
+                setCurrentFlag('🇦🇺');
+                setCurrentLangName('en-US');
+                break;
+            case 'en-US':
+                setCurrentFlag('🇺🇸');
+                setCurrentLangName('en-US');
                 break;
             case 'en-GB':
                 setCurrentFlag('🇬🇧');
-                setCurrentLangName('English (UK)');
+                setCurrentLangName('en-US');
                 break;
             case 'fr-FR':
                 setCurrentFlag('🇫🇷');
-                setCurrentLangName('French');
+                setCurrentLangName('en-US');
                 break;
             case 'de-DE':
                 setCurrentFlag('🇩🇪');
-                setCurrentLangName('German');
+                setCurrentLangName('en-US');
                 break;
             case 'es-ES':
                 setCurrentFlag('🇪🇸');
-                setCurrentLangName('Spanish');
+                setCurrentLangName('en-US');
                 break;
             case 'it-IT':
                 setCurrentFlag('🇮🇹');
-                setCurrentLangName('Italian');
+                setCurrentLangName('en-US');
                 break;
             case 'ja-JP':
                 setCurrentFlag('🇯🇵');
-                setCurrentLangName('Japanese');
+                setCurrentLangName('en-US');
                 break;
             case 'zh-CN':
                 setCurrentFlag('🇨🇳');
-                setCurrentLangName('Chinese');
+                setCurrentLangName('en-US');
                 break;
             case 'ru-RU':
                 setCurrentFlag('🇷🇺');
-                setCurrentLangName('Russian');
+                setCurrentLangName('en-US');
                 break;
             case 'ar-SA':
                 setCurrentFlag('🇸🇦');
-                setCurrentLangName('Arabic');
+                setCurrentLangName('en-US');
+                break;
+            case 'en-AE':
+                setCurrentFlag('🇦🇪');
+                setCurrentLangName('en-US');
                 break;
             default:
                 setCurrentFlag('🇳🇵');
-                setCurrentLangName('English (US)');
+                setCurrentLangName('en-US');
         }
     }, [locale]);
 
@@ -220,6 +236,7 @@ export default function Clock() {
     };
 
     return (
+
         <div className="clock" ref={clockRef} data-date="2024-12-25">
             <div>
                 <div data-clock="years" data-numbers="101" className="clock-face"></div>

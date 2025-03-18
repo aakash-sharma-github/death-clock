@@ -37,14 +37,13 @@ export function AppProvider({ children }) {
 
     // State variables - always start with muted=true for better user experience
     const [locale, setLocale] = useState('en-US');
-    // const [currency, setCurrency] = useState('रू');
     const [isMuted, setIsMuted] = useState(true);
     const [currentSearchEngine, setCurrentSearchEngine] = useState({
         engine: 'google',
         iconName: 'google', // Store a string identifier instead of a component
         url: 'https://www.google.com/search?q='
     });
-    const [balance, setBalance] = useState('रू0.00');
+    const [balance, setBalance] = useState("0.00");
     const [lastUpdated, setLastUpdated] = useState('Never');
     const [dailyGoal, setDailyGoal] = useState('');
     const [showLanguageDialog, setShowLanguageDialog] = useState(false);
@@ -139,16 +138,9 @@ export function AppProvider({ children }) {
 
     // Format balance with current currency symbol and commas
     const formatBalance = (amount) => {
-        const symbol = currencySymbols[currencyType] || 'रू';
+        const symbol = currencySymbols[currencyType]; // Default to Nepali Rupee
 
-        // Different locale format based on currency
-        // let locale = locale;
-        // if (currencyType === 'usd') setLocale(currencySymbols.usd);
-        // else if (currencyType === 'npr') setLocale(currencySymbols.npr);
-        // else if (currencyType === 'aed') setLocale(currencySymbols.aed);
-        // else if (currencyType === 'inr') setLocale(currencySymbols.inr);
-
-        let locale = 'en-US'; // Default to Indian Rupee
+        let locale = 'en-US';
         if (currencyType === 'usd') locale = 'en-US';
         else if (currencyType === 'npr') locale = 'en-US';
         else if (currencyType === 'aed') locale = 'en-US';
@@ -185,19 +177,19 @@ export function AppProvider({ children }) {
             localStorage.setItem('currencyType', newCurrencyType);
 
             // Update the balance with the new currency symbol
-            try {
-                // Extract numeric value and format with new currency
-                const numericBalance = parseFloat(balance.replace(/[^0-9.]/g, ''));
-                if (!isNaN(numericBalance)) {
-                    // Update the currency first so formatBalance uses the new symbol
-                    setCurrencyType(newCurrencyType);
-                    const newFormattedBalance = formatBalance(numericBalance);
-                    setBalance(newFormattedBalance);
-                    localStorage.setItem('balance', newFormattedBalance);
-                }
-            } catch (e) {
-                console.error('Error updating balance with new currency:', e);
-            }
+            // try {
+            //     // Extract numeric value and format with new currency
+            //     const numericBalance = parseFloat(balance.replace(/[^0-9.]/g, ''));
+            //     if (!isNaN(numericBalance)) {
+            //         // Update the currency first so formatBalance uses the new symbol
+            //         setCurrencyType(newCurrencyType);
+            //         const newFormattedBalance = formatBalance(numericBalance);
+            //         setBalance(newFormattedBalance);
+            //         localStorage.setItem('balance', newFormattedBalance);
+            //     }
+            // } catch (e) {
+            //     console.error('Error updating balance with new currency:', e);
+            // }
         }
     };
 
@@ -265,14 +257,15 @@ export function AppProvider({ children }) {
             showLanguageDialog,
             setShowLanguageDialog,
             updateLocale,
+            formatBalance,
             updateBalance,
             toggleSound,
             updateSearchEngine,
             updateDailyGoal,
-            formatBalance,
             currencyType,
             currencySymbols,
             updateCurrencyType
+
         }}>
             {children}
         </AppContext.Provider>
