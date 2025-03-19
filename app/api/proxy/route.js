@@ -20,6 +20,7 @@ export async function GET(request) {
         // Validate URL to prevent proxying to internal network resources
         const parsedUrl = new URL(url);
         const disallowedHosts = ['localhost', '127.0.0.1', '0.0.0.0', '[::1]'];
+
         if (disallowedHosts.includes(parsedUrl.hostname) ||
             /^192\.168\./.test(parsedUrl.hostname) ||
             /^10\./.test(parsedUrl.hostname) ||
@@ -41,11 +42,30 @@ export async function GET(request) {
         const fetchOptions = {
             headers: {
                 'User-Agent': 'Mozilla/5.0 (compatible; NextJS/13.0; +https://nextjs.org/)'
-            }
+            },
+            next: { revalidate: 0 } // Next.js 13+ way to prevent caching
         };
 
         const response = await fetch(url, fetchOptions);
-        const data = await response.json();
+        console.error(`Proxy request to ${url} status: ${response.status}`); // For Vercel logs
+
+        // Check content type before assuming JSON
+        const contentType = response.headers.get('content-type');
+        let data;
+
+        try {
+            if (contentType && contentType.includes('application/json')) {
+                data = await response.json();
+            } else {
+                // Handle non-JSON responses
+                const text = await response.text();
+                data = { text: text, contentType: contentType };
+            }
+        } catch (parseError) {
+            console.error('Error parsing response:', parseError);
+            const text = await response.text();
+            data = { text: text, parseError: parseError.message };
+        }
 
         return new Response(
             JSON.stringify(data),
@@ -54,7 +74,8 @@ export async function GET(request) {
                 headers: {
                     'Content-Type': 'application/json',
                     'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Credentials': 'true'
+                    'Access-Control-Allow-Credentials': 'true',
+                    'Cache-Control': 'no-store, max-age=0'
                 }
             }
         );
@@ -64,7 +85,7 @@ export async function GET(request) {
             JSON.stringify({
                 error: 'Error processing proxy request',
                 message: error.message,
-                stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
+                url: url
             }),
             {
                 status: 500,

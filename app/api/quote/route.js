@@ -1,4 +1,3 @@
-// app/api/quote/route.js
 export async function GET() {
     try {
         // Try the first quote API
@@ -27,13 +26,15 @@ export async function GET() {
 
 async function fetchFromFirstApi() {
     try {
-        const apiKey = process.env.NEXT_PUBLIC_X_RAPIDAPI_KEY;
-        const apiUrl = process.env.NEXT_PUBLIC_X_RAPIDAPI_ENDPOINT;
-        const apihost = process.env.NEXT_PUBLIC_X_RAPIDAPI_HOST;
+        // Changed to server-only environment variables (without NEXT_PUBLIC_)
+        const apiKey = process.env.RAPIDAPI_KEY;
+        const apiUrl = process.env.RAPIDAPI_ENDPOINT;
+        const apihost = process.env.RAPIDAPI_HOST;
 
-        if (!apiKey) {
-            console.error('Missing API key');
-            return { success: false, error: 'Missing API key' };
+        // Enhanced validation for all required environment variables
+        if (!apiKey || !apiUrl || !apihost) {
+            console.error('Missing required environment variables for first API');
+            return { success: false, error: 'Missing configuration' };
         }
 
         const options = {
@@ -43,11 +44,10 @@ async function fetchFromFirstApi() {
                 'X-RapidAPI-Host': apihost,
                 'User-Agent': 'Mozilla/5.0 (compatible; NextJS/13.0; +https://nextjs.org/)'
             },
-            cache: 'no-store' // Prevent caching issues
+            next: { revalidate: 0 } // Next.js 13+ way to prevent caching
         };
 
         const response = await fetch(apiUrl, options);
-        console.log('First API status:', response.status);
 
         if (response.ok) {
             const rawData = await response.json();
@@ -74,14 +74,16 @@ async function fetchFromFirstApi() {
 
 async function fetchFromSecondApi() {
     try {
-        const apiKey = process.env.NEXT_PUBLIC_X_RAPIDAPI_KEY;
-        const apiendpoint = process.env.NEXT_PUBLIC_X_RAPIDAPI_QUOTE_ENDPOINT;
-        const apihost = process.env.NEXT_PUBLIC_X_RAPIDAPI_QUOTE_HOST;
-        const cat = process.env.NEXT_PUBLIC_X_RAPIDAPI_CATEGORY;
+        // Changed to server-only environment variables (without NEXT_PUBLIC_)
+        const apiKey = process.env.RAPIDAPI_KEY;
+        const apiendpoint = process.env.RAPIDAPI_QUOTE_ENDPOINT;
+        const apihost = process.env.RAPIDAPI_QUOTE_HOST;
+        const cat = process.env.RAPIDAPI_CATEGORY;
 
-        if (!apiKey) {
-            console.error('Missing API key');
-            return { success: false, error: 'Missing API key' };
+        // Enhanced validation for all required environment variables
+        if (!apiKey || !apiendpoint || !apihost) {
+            console.error('Missing required environment variables for second API');
+            return { success: false, error: 'Missing configuration' };
         }
 
         const options = {
@@ -91,10 +93,10 @@ async function fetchFromSecondApi() {
                 'X-RapidAPI-Host': apihost,
                 'User-Agent': 'Mozilla/5.0 (compatible; NextJS/13.0; +https://nextjs.org/)'
             },
-            cache: 'no-store' // Prevent caching issues
+            next: { revalidate: 0 } // Next.js 13+ way to prevent caching
         };
 
-        const response = await fetch(`${apiendpoint}?category=${cat}&count=1`, options);
+        const response = await fetch(`${apiendpoint}?category=${cat || 'inspirational'}&count=1`, options);
 
         if (response.ok) {
             const rawData = await response.json();
@@ -134,14 +136,16 @@ function createSuccessResponse(data) {
 
 function createFallbackResponse() {
     const fallbackQuotes = [
-        { quote: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt." },
-        { quote: "Life is what happens when you're busy making other plans.", author: "John Lennon." },
-        { quote: "The purpose of our lives is to be happy.", author: "Dalai Lama." },
-        { quote: "You only live once, but if you do it right, once is enough.", author: "Mae West." },
+        { quote: "The future belongs to those who believe in the beauty of their dreams.", author: "Eleanor Roosevelt" },
+        { quote: "Life is what happens when you're busy making other plans.", author: "John Lennon" },
+        { quote: "The purpose of our lives is to be happy.", author: "Dalai Lama" },
+        { quote: "You only live once, but if you do it right, once is enough.", author: "Mae West" },
         { quote: "The time is always right to do what is right.", author: "Martin Luther King Jr." }
     ];
 
     const randomQuote = fallbackQuotes[Math.floor(Math.random() * fallbackQuotes.length)];
+
+    console.error('Using fallback quote due to API failures');
 
     return new Response(
         JSON.stringify(randomQuote),
